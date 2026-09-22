@@ -141,7 +141,7 @@
     <div class="container">
       <h2 class="section-title">Monte sua reserva</h2>
       <p class="section-lead">
-        Escolha o brinquedo e a região da festa: o valor da entrega é calculado na hora.
+        Escolha um ou mais brinquedos e a região da festa: o valor da entrega é calculado na hora.
         Você confirma tudo com a gente pelo WhatsApp antes de fechar.
       </p>
 
@@ -153,16 +153,30 @@
             <input type="text" id="rNome" required placeholder="Como podemos te chamar?">
           </label>
 
-          <label class="campo">
-            <span>Brinquedo</span>
-            <select id="rBrinquedo" required>
-              <option value="cama-p" data-preco="130">Cama elástica P — R$ 130,00</option>
-              <option value="cama-m" data-preco="150">Cama elástica M — R$ 150,00</option>
-              <option value="cama-g" data-preco="180">Cama elástica G — R$ 180,00</option>
-              <option value="castelinho" data-preco="250">Castelinho inflável — R$ 250,00</option>
-              <option value="piscina" data-preco="130">Piscina de bolinhas — R$ 130,00</option>
-            </select>
-          </label>
+          <fieldset class="campo campo--brinquedos" aria-describedby="brinquedosAjuda">
+            <legend>Brinquedos</legend>
+            <p id="brinquedosAjuda">Marque um ou mais brinquedos para sua festa.</p>
+            <label class="brinquedo-opcao">
+              <input type="checkbox" name="brinquedos" value="cama-p" data-preco="130" checked>
+              <span>Cama elástica P — R$ 130,00</span>
+            </label>
+            <label class="brinquedo-opcao">
+              <input type="checkbox" name="brinquedos" value="cama-m" data-preco="150">
+              <span>Cama elástica M — R$ 150,00</span>
+            </label>
+            <label class="brinquedo-opcao">
+              <input type="checkbox" name="brinquedos" value="cama-g" data-preco="180">
+              <span>Cama elástica G — R$ 180,00</span>
+            </label>
+            <label class="brinquedo-opcao">
+              <input type="checkbox" name="brinquedos" value="castelinho" data-preco="250">
+              <span>Castelinho inflável — R$ 250,00</span>
+            </label>
+            <label class="brinquedo-opcao">
+              <input type="checkbox" name="brinquedos" value="piscina" data-preco="130">
+              <span>Piscina de bolinhas — R$ 130,00</span>
+            </label>
+          </fieldset>
 
           <label class="campo">
             <span>Região da festa</span>
@@ -208,7 +222,7 @@
 
         <div class="reserva__resumo">
           <div class="reserva__linha">
-            <span>Brinquedo</span>
+            <span>Subtotal dos brinquedos</span>
             <strong id="resumoBrinquedo">R$ 130,00</strong>
           </div>
           <div class="reserva__linha">

@@ -27,9 +27,9 @@ if (ano) {
   ano.textContent = new Date().getFullYear();
 }
 
-// Atualiza a estimativa da reserva conforme o brinquedo e a região escolhidos.
+// Atualiza a estimativa da reserva conforme os brinquedos e a região escolhidos.
 const reservaForm = document.getElementById('reservaForm');
-const brinquedo = document.getElementById('rBrinquedo');
+const brinquedos = Array.from(document.querySelectorAll('input[name="brinquedos"]'));
 const regiao = document.getElementById('rRegiao');
 const resumoBrinquedo = document.getElementById('resumoBrinquedo');
 const resumoTaxa = document.getElementById('resumoTaxa');
@@ -40,8 +40,16 @@ const moeda = (valor) => valor.toLocaleString('pt-BR', {
   currency: 'BRL'
 });
 
+const brinquedosSelecionados = () => brinquedos.filter((brinquedo) => brinquedo.checked);
+const subtotalBrinquedos = () => brinquedosSelecionados().reduce(
+  (total, brinquedo) => total + Number(brinquedo.dataset.preco), 0
+);
+
 function atualizarResumo() {
-  const preco = Number(brinquedo?.selectedOptions[0]?.dataset.preco || 0);
+  const preco = subtotalBrinquedos();
+  brinquedos[0]?.setCustomValidity(
+    brinquedosSelecionados().length ? '' : 'Selecione pelo menos um brinquedo.'
+  );
   const taxaSelecionada = regiao?.selectedOptions[0];
   const taxa = taxaSelecionada?.dataset.taxa;
 
@@ -50,12 +58,24 @@ function atualizarResumo() {
   if (resumoTotal) resumoTotal.textContent = taxa ? moeda(preco + Number(taxa)) : '—';
 }
 
-brinquedo?.addEventListener('change', atualizarResumo);
+brinquedos.forEach((brinquedo) => brinquedo.addEventListener('change', atualizarResumo));
 regiao?.addEventListener('change', atualizarResumo);
 atualizarResumo();
 
+document.querySelectorAll('.card__link--reservar').forEach((link) => {
+  link.addEventListener('click', () => {
+    const brinquedo = brinquedos.find((opcao) => opcao.value === link.dataset.brinquedo);
+    if (brinquedo) {
+      brinquedo.checked = true;
+      atualizarResumo();
+    }
+  });
+});
+
 reservaForm?.addEventListener('submit', (evento) => {
   evento.preventDefault();
+  atualizarResumo();
+  if (!reservaForm.reportValidity()) return;
 
   const nome = document.getElementById('rNome').value.trim();
   const endereco = document.getElementById('rEndereco').value.trim();
@@ -74,11 +94,12 @@ reservaForm?.addEventListener('submit', (evento) => {
     return;
   }
 
-  const preco = Number(brinquedo.selectedOptions[0].dataset.preco);
+  const preco = subtotalBrinquedos();
   const mensagem = [
     'Oi! Quero pedir um orçamento para uma festa.',
     `Nome: ${nome}`,
-    `Brinquedo: ${brinquedo.selectedOptions[0].textContent.trim()}`,
+    'Brinquedos:',
+    ...brinquedosSelecionados().map((brinquedo) => `- ${brinquedo.closest('label').textContent.trim()}`),
     `Região: ${regiao.value}`,
     `Endereço: ${endereco}`,
     `Instalação: ${instalacao.replace('T', ' ')}`,

@@ -375,6 +375,45 @@ h1, h2, h3 {
   grid-column: 1 / -1;
 }
 
+.campo--brinquedos {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.campo--brinquedos legend {
+  margin-bottom: 7px;
+}
+
+.campo--brinquedos p {
+  margin: 0;
+  color: var(--cinza);
+  font-size: 0.85rem;
+  font-weight: 400;
+}
+
+.brinquedo-opcao {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 48px;
+  padding: 11px 13px;
+  border: 1px solid #cfcfcf;
+  border-radius: 8px;
+  background: var(--off-white);
+  cursor: pointer;
+}
+
+.brinquedo-opcao input {
+  flex: 0 0 20px;
+  width: 20px;
+  height: 20px;
+  min-height: 0;
+  padding: 0;
+  accent-color: var(--azul);
+}
+
 .reserva__resumo {
   margin-top: 30px;
   padding: 22px;
