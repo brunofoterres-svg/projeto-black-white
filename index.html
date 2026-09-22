@@ -227,8 +227,12 @@
               <strong id="calMes" aria-live="polite"></strong>
               <button type="button" id="calProximo" aria-label="Próximo mês">→</button>
             </div>
+            <label class="calendario__filtro"><input type="checkbox" id="calSomenteDisponiveis" aria-describedby="calFiltroAjuda"> Somente datas disponíveis</label>
+            <p id="calFiltroAjuda" class="calendario__dica">Com brinquedos selecionados, mostra datas com todos disponíveis. Sem seleção, mostra datas com pelo menos um disponível.</p>
+            <p id="calFiltroStatus" class="calendario__dica" role="status"></p>
             <div class="calendario__semana" aria-hidden="true"><span>D</span><span>S</span><span>T</span><span>Q</span><span>Q</span><span>S</span><span>S</span></div>
             <div class="calendario__dias" id="calDias" role="group" aria-labelledby="calMes"></div>
+            <p class="calendario__dica">Contagem por dia: disponíveis / total de brinquedos. “?” indica dados a confirmar. Com horários preenchidos, considera a duração da locação.</p>
             <p class="calendario__indicadores-legenda" id="calIndicadoresLegenda"></p>
             <div class="calendario__legenda" aria-label="Legenda para os brinquedos selecionados">
               <span><i class="calendario__amostra calendario__amostra--available" aria-hidden="true"></i>Todos disponíveis</span>
@@ -240,6 +244,7 @@
               <span>◯ Hoje</span>
             </div>
             <p id="calStatus" class="calendario__status" role="status">Disponibilidade a confirmar pelo WhatsApp.</p>
+            <p id="calMudancas" class="calendario__mudancas" role="status" aria-live="polite" aria-atomic="true"></p>
             <div class="calendario__detalhes" id="calDetalhes" aria-live="polite" hidden></div>
             <div class="calendario__sugestoes" id="calSugestoes" aria-live="polite" hidden></div>
             <p class="calendario__dica">Ao selecionar o dia, confira o horário sugerido abaixo e informe a retirada. A seleção não confirma a reserva.</p>

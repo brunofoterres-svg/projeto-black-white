@@ -55,8 +55,8 @@ function atualizarResumo() {
   const taxa = taxaSelecionada?.dataset.taxa;
 
   if (resumoBrinquedo) resumoBrinquedo.textContent = moeda(preco);
-  if (resumoTaxa) resumoTaxa.textContent = taxa ? moeda(Number(taxa)) : 'Selecione a região';
-  if (resumoTotal) resumoTotal.textContent = taxa ? moeda(preco + Number(taxa)) : '—';
+  if (resumoTaxa) resumoTaxa.textContent = taxa ? moeda(Number(taxa)) : regiao?.value ? 'A confirmar' : 'Selecione a região';
+  if (resumoTotal) resumoTotal.textContent = taxa ? moeda(preco + Number(taxa)) : regiao?.value ? 'A confirmar' : '—';
 }
 
 brinquedos.forEach((brinquedo) => brinquedo.addEventListener('change', atualizarResumo));
@@ -91,7 +91,7 @@ reservaForm?.addEventListener('submit', (evento) => {
   const desinstalacao = document.getElementById('rDesinstalacao').value;
   const taxa = regiao.selectedOptions[0].dataset.taxa;
 
-  if (!taxa) {
+  if (!regiao.value) {
     regiao.focus();
     return;
   }
@@ -118,8 +118,8 @@ reservaForm?.addEventListener('submit', (evento) => {
     `Instalação: ${formatarHorario(instalacao)}`,
     `Retirada: ${formatarHorario(desinstalacao)}`,
     `Subtotal dos brinquedos: ${moeda(preco)}`,
-    `Taxa de entrega: ${moeda(Number(taxa))}`,
-    `Total estimado: ${moeda(preco + Number(taxa))}`,
+    `Taxa de entrega: ${taxa ? moeda(Number(taxa)) : 'A confirmar com a empresa'}`,
+    `Total estimado: ${taxa ? moeda(preco + Number(taxa)) : 'A confirmar após calcular a entrega'}`,
     '',
     'Solicitação sujeita à disponibilidade e à aprovação da Black White Festas.',
     'A reserva só será confirmada após a aprovação da empresa. Aguardo a confirmação dos valores e horários.'

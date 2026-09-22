@@ -23,6 +23,8 @@ Na primeira visita, pelo próprio computador (`127.0.0.1` ou `localhost`), escol
 
 O botão **Solicitar reserva pelo WhatsApp** abre uma mensagem com nome, telefone, brinquedos selecionados, região, endereço, datas e horários de instalação e retirada, subtotal, entrega e total estimado. O cliente precisa enviar a mensagem no WhatsApp. O formulário e a mensagem informam que a reserva depende da aprovação da Black White Festas.
 
+Para **Outra região / acima de 40 km**, a mensagem mantém o subtotal dos brinquedos e informa entrega e total a confirmar pela empresa. Nenhuma taxa é presumida para essa opção.
+
 A abertura do WhatsApp não cria nem confirma registros no banco. A empresa analisa o pedido, cadastra a reserva no painel como **Pendente** e, após aprovar, usa **Confirmar**. A confirmação verifica os conflitos no servidor e atualiza a disponibilidade compartilhada. A resposta ao cliente é feita pela empresa no WhatsApp.
 
 ## Calendário público
@@ -30,6 +32,10 @@ A abertura do WhatsApp não cria nem confirma registros no banco. A empresa anal
 `api/availability.php?month=AAAA-MM` fornece somente a situação de cada equipamento, sem nomes, telefones ou endereços. O site e o painel administrativo atualizam a consulta a cada 30 segundos enquanto estão visíveis, ao voltar para a aba e ao recuperar a conexão. Após salvar no painel, a agenda desse painel é atualizada imediatamente; nos demais dispositivos, a alteração aparece na próxima consulta (até 30 segundos com conexão ativa). A atualização automática preserva os formulários em edição.
 
 Sem horários informados, a disponibilidade pública é por **dia inteiro**: qualquer reserva, manutenção ou intervalo de transporte naquele dia marca o equipamento indisponível. Ao informar instalação e retirada, o site consulta o período exato e inclui a margem de transporte. O calendário administrativo mostra os dias ocupados e, nos detalhes de cada registro, o horário de liberação.
+
+O filtro **Somente datas disponíveis** mantém as posições dos dias da semana e mostra datas com todos os brinquedos selecionados livres; sem seleção, basta um brinquedo disponível. Datas passadas, bloqueadas ou sem disponibilidade conhecida são excluídas. A contagem diária considera todos os equipamentos do catálogo, com `?` para dados incompletos, e acompanha os horários informados. A legenda explica as cores e os marcadores.
+
+Durante o preenchimento, mudanças recebidas da API para o mesmo período geram um aviso com os brinquedos que ficaram ocupados ou livres. A primeira consulta e a troca de período não são tratadas como mudanças de disponibilidade. Os campos preenchidos são preservados; equipamentos indisponíveis são retirados do orçamento.
 
 Antes do primeiro administrador ser criado, a API retorna disponibilidade desconhecida.
 

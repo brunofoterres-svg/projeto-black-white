@@ -39,4 +39,17 @@ test('orçamento e WhatsApp usam somente os equipamentos mantidos', () => {
   p.checked = false;
   events.submit({ preventDefault() {} });
   assert.equal(urls.length, 1, 'não envia um pedido sem equipamentos');
+  p.checked = true;
+  elements.rRegiao.value = 'Outra região / acima de 40km';
+  elements.rRegiao.selectedOptions[0].dataset.taxa = '';
+  events.submit({ preventDefault() {} });
+  assert.equal(urls.length, 2, 'permite solicitar entrega fora da tabela');
+  const custom = new URL(urls[1]).searchParams.get('text');
+  assert.match(custom, /Taxa de entrega: A confirmar com a empresa/);
+  assert.match(custom, /Total estimado: A confirmar após calcular a entrega/);
+  assert.match(custom, /Subtotal dos brinquedos: R\$\s*130,00/);
+  assert.equal(elements.resumoTotal.textContent, 'A confirmar');
+  elements.rRegiao.value = '';
+  events.submit({ preventDefault() {} });
+  assert.equal(urls.length, 2, 'região vazia não envia solicitação');
 });

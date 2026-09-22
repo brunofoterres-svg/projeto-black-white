@@ -83,15 +83,23 @@ const ReservaCalendar = (() => {
     const duration = oldEnd - oldStart;
     return { start: nextStart, end: duration > 0 ? localDateTime(new Date(+new Date(nextStart) + duration)) : '' };
   };
+  const availableCount = (data, day, ids) => ids.filter(id => toyAvailability(data, day, id) === 'available').length;
+  const matchesAvailableFilter = (data, day, selectedIds, allIds, today, blocked = []) =>
+    day >= today && !blocked.includes(day) && (selectedIds.length
+      ? availability(data, day, selectedIds) === 'available'
+      : availableCount(data, day, allIds) > 0);
+  const availabilityChanges = (before, after) => Object.keys(after).filter(id =>
+    ['available', 'unavailable'].includes(before?.[id]) &&
+    ['available', 'unavailable'].includes(after[id]) && before[id] !== after[id]);
   const canSelect = (day, today, state) => day >= today && state !== 'unavailable';
-  return { dateKey, monthStart, monthDays, availability, canSelect, toyAvailability, dayAvailability, applyToyAvailability, calendarState, toyIndicators, periodDays, periodAvailability, nextAvailableDates, availableToyIds, moveRentalDate };
+  return { availableCount, matchesAvailableFilter, availabilityChanges, dateKey, monthStart, monthDays, availability, canSelect, toyAvailability, dayAvailability, applyToyAvailability, calendarState, toyIndicators, periodDays, periodAvailability, nextAvailableDates, availableToyIds, moveRentalDate };
 })();
 if (typeof module !== 'undefined') module.exports = ReservaCalendar;
 
 if (typeof document !== 'undefined') (() => {
   const root = document.getElementById('calendarioReserva');
   if (!root) return;
-  const { dateKey, monthStart, monthDays, availability, canSelect, toyAvailability, dayAvailability, applyToyAvailability, calendarState, toyIndicators, periodDays, periodAvailability, nextAvailableDates, availableToyIds, moveRentalDate } = ReservaCalendar;
+  const { availableCount, matchesAvailableFilter, availabilityChanges, dateKey, monthStart, monthDays, availability, canSelect, toyAvailability, dayAvailability, applyToyAvailability, calendarState, toyIndicators, periodDays, periodAvailability, nextAvailableDates, availableToyIds, moveRentalDate } = ReservaCalendar;
   const installation = document.getElementById('rInstalacao');
   const removal = document.getElementById('rDesinstalacao');
   const days = document.getElementById('calDias');
@@ -104,6 +112,10 @@ if (typeof document !== 'undefined') (() => {
   const wanted = new Set(toys.filter((toy) => toy.checked).map((toy) => toy.value));
   const selectedToys = () => [...wanted];
   const suggestions = document.getElementById('calSugestoes');
+  const availableOnly = document.getElementById('calSomenteDisponiveis');
+  const filterStatus = document.getElementById('calFiltroStatus');
+  const changesNotice = document.getElementById('calMudancas');
+  let lastSnapshot = null;
   let month = monthStart(new Date());
   let selected = installation.value.slice(0, 10);
   let data = {};
@@ -136,6 +148,7 @@ if (typeof document !== 'undefined') (() => {
   document.querySelector('.campo--brinquedos').append(notice);
 
   function updateToys() {
+    if (loading) return;
     const removed = [];
     toys.forEach((toy) => {
       const state = selected ? (periodDays(installation.value, removal.value).length
@@ -146,11 +159,16 @@ if (typeof document !== 'undefined') (() => {
       toy.closest('label').dataset.availability = state;
       toyStatuses.get(toy).textContent = !selected ? 'Escolha uma data' : loading ? 'Consultando…' : labels[state];
     });
+    if (!removed.length && [...wanted].every(id => !toys.find(toy => toy.value === id)?.disabled)) notice.textContent = '';
     if (removed.length) notice.textContent = `Removido da seleção por indisponibilidade: ${removed.join(', ')}. Os demais brinquedos continuam disponíveis para escolha.`;
     atualizarResumo();
   }
 
   function validateDates() {
+    if (loading) {
+      installation.setCustomValidity('Aguarde a consulta de disponibilidade terminar antes de enviar.');
+      return;
+    }
     const now = new Date();
     installation.min = `${dateKey(now)}T${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
     const after = installation.value ? new Date(new Date(installation.value).getTime() + 60000) : now;
@@ -281,6 +299,7 @@ if (typeof document !== 'undefined') (() => {
       blank.setAttribute('aria-hidden', 'true');
       days.append(blank);
     }
+    let visibleDays = 0;
     for (const day of monthDays(month)) {
       let dayData = data;
       if (data.__schedule && periodDays(installation.value, removal.value).length) {
@@ -289,6 +308,19 @@ if (typeof document !== 'undefined') (() => {
           periodAvailability(data, candidate.start, candidate.end, [toy.value], blockedDates)])) };
       }
       const state = calendarState(dayData, day, selectedToys(), today, blockedDates);
+      const allIds = toys.map(toy => toy.value);
+      if (availableOnly.checked && !matchesAvailableFilter(dayData, day, selectedToys(), allIds, today, blockedDates)) {
+        const placeholder = document.createElement('span');
+        placeholder.setAttribute('aria-hidden', 'true');
+        days.append(placeholder);
+        continue;
+      }
+      visibleDays++;
+      const count = state === 'blocked' ? 0 : availableCount(dayData, day, allIds);
+      const known = allIds.every(id => ['available', 'unavailable'].includes(toyAvailability(dayData, day, id)));
+      const countLabel = state === 'blocked' ? 'Data bloqueada' : known
+        ? `${count} de ${allIds.length} brinquedos disponíveis` : `${count} disponíveis; demais a confirmar`;
+
       const button = document.createElement('button');
       button.type = 'button';
       const number = document.createElement('span');
@@ -303,16 +335,24 @@ if (typeof document !== 'undefined') (() => {
         dot.title = `${toyNames.get(id)}: ${detailLabels[toyState]}`;
         dots.append(dot);
       }
-      button.append(number, dots);
+      const counter = document.createElement('small');
+      counter.className = 'calendario__contagem';
+      counter.textContent = state === 'blocked' ? '—' : known ? `${count}/${allIds.length}` : `${count}/?`;
+      counter.title = countLabel;
+      button.append(number, dots, counter);
       button.dataset.date = day;
       button.className = `calendario__dia calendario__dia--${state}`;
       button.disabled = state === 'blocked';
-      button.setAttribute('aria-label', `${fullDate(day)}: ${day < today ? 'data passada' : labels[state]}. ${indicators.map(({ id, state: toyState }) => `${toyNames.get(id)}: ${detailLabels[toyState]}`).join('; ')}`);
+      button.setAttribute('aria-label', `${fullDate(day)}: ${day < today ? 'data passada' : labels[state]}. ${countLabel}. ${indicators.map(({ id, state: toyState }) => `${toyNames.get(id)}: ${detailLabels[toyState]}`).join('; ')}`);
       button.setAttribute('aria-pressed', String(day === selected));
       if (day === today) button.setAttribute('aria-current', 'date');
       button.addEventListener('click', () => select(day));
       days.append(button);
     }
+    filterStatus.textContent = availableOnly.checked
+      ? loading ? 'Consultando datas disponíveis…' : failed ? 'Não foi possível conferir as datas. Aguarde a próxima atualização.'
+        : visibleDays ? `${visibleDays} data(s) disponível(is) neste mês.` : 'Nenhuma data com disponibilidade confirmada neste mês. Tente outro mês ou ajuste os brinquedos.'
+      : '';
     if (loading) status.textContent = 'Consultando disponibilidade…';
     else if (failed) status.textContent = 'Não foi possível atualizar a agenda. Confirme a disponibilidade pelo WhatsApp.';
     else if (!endpoint) status.textContent = `${selected ? fullDate(selected) + '. ' : ''}Disponibilidade a confirmar pelo WhatsApp.`;
@@ -341,8 +381,8 @@ if (typeof document !== 'undefined') (() => {
 
   async function refresh() {
     request?.abort();
-    data = {};
-    blockedDates = [];
+    const snapshotKey = `${installation.value}|${removal.value}`;
+    // Preserva a agenda visível enquanto a nova consulta está em andamento.
     failed = false;
     if (!endpoint) { render(); return; }
     const controller = new AbortController();
@@ -389,6 +429,16 @@ if (typeof document !== 'undefined') (() => {
         if (!Number.isInteger(minutes) || minutes < 0 || minutes > 1440 || schedules.some((item) => item.turnaroundMinutes !== minutes || !Array.isArray(item.busy))) throw new Error('Agenda inconsistente');
         data.__schedule = { turnaroundMinutes: minutes, months: schedules.map((item) => item.month), busy: schedules.flatMap((item) => item.busy) };
       }
+      if (selected) {
+        const states = Object.fromEntries(toys.map(toy => [toy.value, blockedDates.includes(selected) ? 'unavailable'
+          : periodDays(installation.value, removal.value).length
+            ? periodAvailability(data, installation.value, removal.value, [toy.value], blockedDates)
+            : toyAvailability(data, selected, toy.value)]));
+        const changed = lastSnapshot?.key === snapshotKey ? availabilityChanges(lastSnapshot.states, states) : [];
+        if (lastSnapshot?.key !== snapshotKey) changesNotice.textContent = '';
+        if (changed.length) changesNotice.textContent = `A disponibilidade mudou no período escolhido: ${changed.map(id => `${toyNames.get(id)} agora ${states[id] === 'available' ? 'disponível' : 'indisponível'}`).join('; ')}. Confira os brinquedos e o orçamento antes de enviar a solicitação.`;
+        lastSnapshot = { key: snapshotKey, states };
+      } else { lastSnapshot = null; changesNotice.textContent = ''; }
     } catch {
       if (request !== controller) return;
       data = {};
@@ -404,6 +454,7 @@ if (typeof document !== 'undefined') (() => {
     month = new Date(month.getFullYear(), month.getMonth() + offset, 1, 12);
     refresh();
   }
+  availableOnly.addEventListener('change', render);
   previous.addEventListener('click', () => move(-1));
   document.getElementById('calProximo').addEventListener('click', () => move(1));
   document.getElementById('calHoje').addEventListener('click', () => { month = monthStart(new Date()); refresh(); });

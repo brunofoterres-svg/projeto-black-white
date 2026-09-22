@@ -168,3 +168,24 @@ test('sugestões respeitam os horários e a margem de transporte', () => {
   const matches = nextAvailableDates(data, '2026-10-12T09:00', '2026-10-12T18:00', ['g'], [], new Date('2026-10-01T00:00'));
   assert.deepEqual(matches.map(item => item.start), ['2026-10-14T09:00', '2026-10-15T09:00', '2026-10-16T09:00']);
 });
+
+const { availableCount, matchesAvailableFilter, availabilityChanges } = require('../js/calendar.js');
+test('filtro exige todos os selecionados livres ou pelo menos um sem seleção', () => {
+  const day = '2026-10-12', ids = ['p', 'g', 'm'];
+  const data = { [day]: { p: 'available', g: 'unavailable' } };
+  assert.equal(availableCount(data, day, ids), 1);
+  assert.equal(matchesAvailableFilter(data, day, [], ids, day), true);
+  assert.equal(matchesAvailableFilter(data, day, ['p'], ids, day), true);
+  assert.equal(matchesAvailableFilter(data, day, ['p', 'g'], ids, day), false);
+  assert.equal(matchesAvailableFilter(data, day, ['p', 'm'], ids, day), false);
+  assert.equal(matchesAvailableFilter({}, day, [], ids, day), false);
+  assert.equal(matchesAvailableFilter(data, day, [], ids, '2026-10-13'), false);
+  assert.equal(matchesAvailableFilter(data, day, [], ids, day, [day]), false);
+});
+test('avisos detectam ocupação e liberação sem tratar falta de dados como mudança', () => {
+  assert.deepEqual(availabilityChanges({ p: 'available', g: 'unavailable', m: 'unknown' },
+    { p: 'unavailable', g: 'available', m: 'available' }), ['p', 'g']);
+  assert.deepEqual(availabilityChanges(null, { p: 'available' }), []);
+  assert.deepEqual(availabilityChanges({ p: 'available' }, { p: 'unknown' }), []);
+  assert.deepEqual(availabilityChanges({ p: 'available' }, { p: 'available' }), []);
+});

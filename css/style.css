@@ -1053,3 +1053,12 @@ main > section:not(.hero) .party-star--two { right: 7%; bottom: 35px; font-size:
   .reserva__linha strong { margin-left: auto; }
   .brinquedo-nome { min-width: 0; overflow-wrap: anywhere; }
 }
+
+/* Filtro, contagem diária e mudanças recebidas durante o preenchimento. */
+.calendario__filtro { display: flex; align-items: center; gap: 10px; min-height: 44px; font-size: .8rem; cursor: pointer; }
+.reserva__campos .calendario__filtro input { width: 20px; height: 20px; min-height: 20px; padding: 0; flex: 0 0 20px; accent-color: #b8860b; }
+.calendario__semana { margin-top: 14px; }
+.calendario__contagem { font-size: .65rem; font-weight: 600; line-height: 1.2; }
+.calendario__dia { min-height: 78px; }
+.calendario__mudancas { padding: 12px; border-left: 3px solid #b8860b; border-radius: 8px; background: #fff8df; color: #514313; font-size: .8rem; line-height: 1.6; overflow-wrap: anywhere; }
+.calendario__mudancas:empty, #calFiltroStatus:empty { display: none; }
