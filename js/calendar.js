@@ -45,6 +45,14 @@ const ReservaCalendar = (() => {
   const periodAvailability = (data, start, end, toys, blockedDates = []) => {
     const dates = periodDays(start, end);
     if (!dates.length || !toys.length) return 'unknown';
+    if (data?.__schedule) {
+      const schedule = data.__schedule;
+      const expandedEnd = new Date(new Date(end).getTime() + schedule.turnaroundMinutes * 60000);
+      const coverage = periodDays(start, localDateTime(expandedEnd));
+      if (coverage.some((day) => blockedDates.includes(day))) return 'unavailable';
+      if (schedule.busy.some((busy) => toys.includes(busy.toy) && new Date(start) < new Date(busy.end) && new Date(busy.start) < expandedEnd)) return 'unavailable';
+      return coverage.length && coverage.every((day) => schedule.months.includes(day.slice(0, 7))) ? 'available' : 'unknown';
+    }
     const states = dates.map((day) => blockedDates.includes(day) ? 'unavailable' : availability(data, day, toys));
     if (states.includes('unavailable')) return 'unavailable';
     return states.every((state) => state === 'available') ? 'available' : 'unknown';
@@ -111,7 +119,7 @@ if (typeof document !== 'undefined') (() => {
   const toyNames = new Map(toys.map((toy) => [toy.value,
     toy.closest('label').querySelector('.brinquedo-nome').textContent.split(' — ')[0].trim()
   ]));
-  const detailLabels = { available: 'Disponível', unavailable: 'Alugado', unknown: 'A confirmar', blocked: 'Data bloqueada' };
+  const detailLabels = { available: 'Disponível', unavailable: 'Indisponível', unknown: 'A confirmar', blocked: 'Data bloqueada' };
   const toyStatuses = new Map();
   toys.forEach((toy) => {
     const label = toy.closest('label');
@@ -151,7 +159,7 @@ if (typeof document !== 'undefined') (() => {
       ? 'Esta data está bloqueada. Escolha outro dia.'
       : selected && toys.every((toy) => toy.disabled)
       ? 'Todos os brinquedos estão indisponíveis neste dia. Escolha outra data.'
-      : selected && availability(data, selected, selectedToys()) === 'unavailable'
+      : selected && !periodDays(installation.value, removal.value).length && availability(data, selected, selectedToys()) === 'unavailable'
       ? 'Um dos brinquedos selecionados está indisponível neste dia. Escolha outra data ou outro brinquedo.' : '');
     if (periodAvailability(data, installation.value, removal.value, selectedToys(), blockedDates) === 'unavailable') {
       installation.setCustomValidity('Há brinquedos indisponíveis no período. Escolha uma sugestão ou ajuste os brinquedos.');
@@ -166,7 +174,12 @@ if (typeof document !== 'undefined') (() => {
     const list = document.createElement('ul');
     // Mantém os alugados visíveis mesmo após sua remoção automática do orçamento.
     const blocked = selected < dateKey(new Date()) || blockedDates.includes(selected);
-    for (const { id, state } of toyIndicators(data, selected, toys.map((toy) => toy.value), blocked)) {
+    const periodValid = periodDays(installation.value, removal.value).length;
+    if (periodValid) heading.textContent = 'Disponibilidade no período escolhido';
+    const detailStates = toys.map((toy) => ({ id: toy.value, state: blocked ? 'blocked' : periodValid
+      ? periodAvailability(data, installation.value, removal.value, [toy.value], blockedDates)
+      : toyAvailability(data, selected, toy.value) }));
+    for (const { id, state } of detailStates) {
       const item = document.createElement('li');
       const dot = document.createElement('span');
       dot.className = `calendario__ponto calendario__ponto--${state}`;
@@ -184,7 +197,7 @@ if (typeof document !== 'undefined') (() => {
 
   function renderSuggestions() {
     const conflict = periodAvailability(data, installation.value, removal.value, selectedToys(), blockedDates) === 'unavailable'
-      || (selected && availability(data, selected, selectedToys()) === 'unavailable');
+      || (selected && !periodDays(installation.value, removal.value).length && availability(data, selected, selectedToys()) === 'unavailable');
     suggestions.hidden = !conflict;
     suggestions.replaceChildren();
     if (!conflict) return;
@@ -269,7 +282,13 @@ if (typeof document !== 'undefined') (() => {
       days.append(blank);
     }
     for (const day of monthDays(month)) {
-      const state = calendarState(data, day, selectedToys(), today, blockedDates);
+      let dayData = data;
+      if (data.__schedule && periodDays(installation.value, removal.value).length) {
+        const candidate = moveRentalDate(day, installation.value, removal.value);
+        dayData = { [day]: Object.fromEntries(toys.map((toy) => [toy.value,
+          periodAvailability(data, candidate.start, candidate.end, [toy.value], blockedDates)])) };
+      }
+      const state = calendarState(dayData, day, selectedToys(), today, blockedDates);
       const button = document.createElement('button');
       button.type = 'button';
       const number = document.createElement('span');
@@ -277,7 +296,7 @@ if (typeof document !== 'undefined') (() => {
       const dots = document.createElement('span');
       dots.className = 'calendario__pontos';
       dots.setAttribute('aria-hidden', 'true');
-      const indicators = toyIndicators(data, day, indicatorToys, state === 'blocked');
+      const indicators = toyIndicators(dayData, day, indicatorToys, state === 'blocked');
       for (const { id, state: toyState } of indicators) {
         const dot = document.createElement('span');
         dot.className = `calendario__ponto calendario__ponto--${toyState}`;
@@ -298,7 +317,9 @@ if (typeof document !== 'undefined') (() => {
     else if (failed) status.textContent = 'Não foi possível atualizar a agenda. Confirme a disponibilidade pelo WhatsApp.';
     else if (!endpoint) status.textContent = `${selected ? fullDate(selected) + '. ' : ''}Disponibilidade a confirmar pelo WhatsApp.`;
     else if (!selectedToys().length) status.textContent = 'Selecione os brinquedos para visualizar as cores de disponibilidade.';
-    else if (selected) status.textContent = `${fullDate(selected)}: confira a disponibilidade individual na lista de brinquedos.`;
+    else if (selected) status.textContent = data.__schedule && periodDays(installation.value, removal.value).length
+      ? `Disponibilidade para os horários informados, incluindo ${data.__schedule.turnaroundMinutes} minutos de desmontagem e transporte.`
+      : `${fullDate(selected)}: informe instalação e retirada para consultar os horários exatos.`;
     else status.textContent = 'Agenda atualizada. Para sua seleção: verde, todos disponíveis; amarelo, disponibilidade parcial; vermelho, todos indisponíveis.';
     renderDetails();
     renderSuggestions();
@@ -334,12 +355,19 @@ if (typeof document !== 'undefined') (() => {
       const monthsSet = new Set([dateKey(month).slice(0, 7), selected.slice(0, 7)].filter(Boolean));
       if (periodDays(installation.value, removal.value).length) {
         const until = new Date(removal.value);
-        until.setDate(until.getDate() + 90);
+        until.setDate(until.getDate() + 91);
         const cursor = monthStart(new Date(installation.value));
         while (cursor <= until) {
           monthsSet.add(dateKey(cursor).slice(0, 7));
           cursor.setMonth(cursor.getMonth() + 1);
         }
+      }
+      const lastVisible = new Date(month.getFullYear(), month.getMonth() + 1, 0, 12);
+      const extraDays = Math.ceil((new Date(removal.value) - new Date(installation.value)) / 86400000);
+      if (extraDays > 0 && extraDays <= 366) {
+        lastVisible.setDate(lastVisible.getDate() + extraDays + 1);
+        const cursor = monthStart(month);
+        while (cursor <= lastVisible) { monthsSet.add(dateKey(cursor).slice(0,7)); cursor.setMonth(cursor.getMonth()+1); }
       }
       const months = [...monthsSet];
       const results = await Promise.all(months.map(async (key) => {
@@ -350,11 +378,17 @@ if (typeof document !== 'undefined') (() => {
         const payload = await response.json();
         if (!payload.days || typeof payload.days !== 'object' || Array.isArray(payload.days)) throw new Error('Agenda inválida');
         if (payload.blockedDates !== undefined && (!Array.isArray(payload.blockedDates) || !payload.blockedDates.every((day) => typeof day === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(day)))) throw new Error('Bloqueios inválidos');
-        return { days: payload.days, blockedDates: payload.blockedDates || [] };
+        return { days: payload.days, blockedDates: payload.blockedDates || [], schedule: payload.schedule };
       }));
       if (request !== controller) return;
       data = Object.assign({}, ...results.map((result) => result.days));
       blockedDates = [...new Set(results.flatMap((result) => result.blockedDates))];
+      if (results.every((result) => result.schedule)) {
+        const schedules = results.map((result) => result.schedule);
+        const minutes = schedules[0].turnaroundMinutes;
+        if (!Number.isInteger(minutes) || minutes < 0 || minutes > 1440 || schedules.some((item) => item.turnaroundMinutes !== minutes || !Array.isArray(item.busy))) throw new Error('Agenda inconsistente');
+        data.__schedule = { turnaroundMinutes: minutes, months: schedules.map((item) => item.month), busy: schedules.flatMap((item) => item.busy) };
+      }
     } catch {
       if (request !== controller) return;
       data = {};

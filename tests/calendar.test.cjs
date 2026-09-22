@@ -132,3 +132,39 @@ test('trocar data preenche instalação e conserva horário e duração na virad
   });
   assert.deepEqual(moveRentalDate('2026-10-31', '', ''), { start: '2026-10-31T09:00', end: '' });
 });
+
+test('consulta horários exatos com margem antes e depois, isolada por brinquedo', () => {
+  // O fim recebido da API já inclui a margem da reserva existente.
+  const data = { __schedule: { months: ['2026-10'], turnaroundMinutes: 120,
+    busy: [{ toy: 'g', start: '2026-10-12T10:00', end: '2026-10-12T20:00' }] } };
+  const check = (start, end, toys = ['g']) => periodAvailability(data, `2026-10-12T${start}`, `2026-10-12T${end}`, toys);
+  assert.equal(check('09:00', '12:00'), 'unavailable');
+  assert.equal(check('18:00', '19:00'), 'unavailable');
+  assert.equal(check('19:59', '21:00'), 'unavailable');
+  assert.equal(check('20:00', '21:00'), 'available');
+  assert.equal(check('07:00', '08:00'), 'available');
+  assert.equal(check('07:00', '08:01'), 'unavailable', 'transporte da nova reserva colide com a instalação existente');
+  assert.equal(check('10:00', '18:00', ['p']), 'available');
+  assert.equal(check('10:00', '18:00', ['p', 'g']), 'unavailable');
+  data.__schedule.turnaroundMinutes = 0;
+  assert.equal(check('08:00', '10:00'), 'available');
+});
+
+test('margem atravessa mês e exige cobertura completa, inclusive de bloqueios', () => {
+  const data = { __schedule: { months: ['2026-10'], turnaroundMinutes: 120, busy: [] } };
+  const check = (blocked = []) => periodAvailability(data, '2026-10-31T20:00', '2026-10-31T23:00', ['g'], blocked);
+  assert.equal(check(), 'unknown');
+  data.__schedule.months.push('2026-11');
+  assert.equal(check(), 'available');
+  assert.equal(check(['2026-11-01']), 'unavailable');
+  data.__schedule.busy.push({toy: 'g', start: '2026-11-01T00:30', end: '2026-11-01T12:00'});
+  assert.equal(check(), 'unavailable');
+  assert.equal(periodAvailability(null, '2026-10-31T20:00', '2026-10-31T23:00', ['g']), 'unknown');
+});
+
+test('sugestões respeitam os horários e a margem de transporte', () => {
+  const data = { __schedule: { months: ['2026-10'], turnaroundMinutes: 120,
+    busy: [{ toy: 'g', start: '2026-10-13T19:00', end: '2026-10-13T22:00' }] } };
+  const matches = nextAvailableDates(data, '2026-10-12T09:00', '2026-10-12T18:00', ['g'], [], new Date('2026-10-01T00:00'));
+  assert.deepEqual(matches.map(item => item.start), ['2026-10-14T09:00', '2026-10-15T09:00', '2026-10-16T09:00']);
+});

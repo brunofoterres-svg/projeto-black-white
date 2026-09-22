@@ -14,14 +14,16 @@ Na primeira visita, pelo próprio computador (`127.0.0.1` ou `localhost`), escol
 - **Confirmar**, **Editar** e **Cancelar** ficam na lista de registros. Cancelar preserva o histórico e libera os equipamentos.
 - **Bloquear manutenção:** selecione o equipamento no filtro, clique no dia e registre início/fim e motivo. É possível bloquear vários equipamentos no mesmo registro.
 - O calendário administrativo mostra os registros do equipamento filtrado. Clique num dia e depois num registro para editar.
-- Sobreposição é conferida no servidor, dentro de uma transação SQLite, inclusive ao confirmar ou reativar uma reserva. Horários adjacentes são permitidos: retirada às 12h e próxima instalação às 12h não se sobrepõem.
+- Sobreposição é conferida no servidor, dentro de uma transação SQLite, inclusive ao confirmar ou reativar uma reserva. O intervalo para desmontagem e transporte é de 120 minutos por padrão e pode ser alterado no painel. Com essa margem, uma retirada às 12h libera o brinquedo às 14h. A margem não é acrescentada ao fim de uma manutenção.
+- Alterar a margem também verifica os registros ativos: o painel rejeita a mudança se ela provocar conflitos.
+- Ao preencher os horários no formulário administrativo, o horário previsto de liberação aparece antes de salvar. A gravação sempre verifica novamente os conflitos no servidor, inclusive na confirmação e na reativação de um registro cancelado.
 - Preços usam a mesma tabela atual do site. A taxa de entrega é informada no painel. Manutenção tem total zero.
 
 ## Calendário público
 
 `api/availability.php?month=AAAA-MM` fornece somente a situação de cada equipamento, sem nomes, telefones ou endereços. O site atualiza a consulta a cada 30 segundos enquanto está visível e ao voltar para a aba.
 
-A disponibilidade pública é por **dia inteiro**: qualquer reserva ou manutenção ativa naquele dia marca o equipamento indisponível. O painel valida conflitos por horário. Portanto, o público não oferece automaticamente uma janela livre dentro de um dia parcialmente ocupado; confirme essas exceções pelo contato direto. Sugestões de datas continuam exigindo todos os dias do período livres.
+Sem horários informados, a disponibilidade pública é por **dia inteiro**: qualquer reserva, manutenção ou intervalo de transporte naquele dia marca o equipamento indisponível. Ao informar instalação e retirada, o site consulta o período exato e inclui a margem de transporte. O calendário administrativo mostra os dias ocupados e, nos detalhes de cada registro, o horário de liberação.
 
 Antes do primeiro administrador ser criado, a API retorna disponibilidade desconhecida.
 
