@@ -19,15 +19,23 @@ Na primeira visita, pelo próprio computador (`127.0.0.1` ou `localhost`), escol
 - Ao preencher os horários no formulário administrativo, o horário previsto de liberação aparece antes de salvar. A gravação sempre verifica novamente os conflitos no servidor, inclusive na confirmação e na reativação de um registro cancelado.
 - Preços usam a mesma tabela atual do site. A taxa de entrega é informada no painel. Manutenção tem total zero.
 
+## Solicitação pelo WhatsApp
+
+O botão **Solicitar reserva pelo WhatsApp** abre uma mensagem com nome, telefone, brinquedos selecionados, região, endereço, datas e horários de instalação e retirada, subtotal, entrega e total estimado. O cliente precisa enviar a mensagem no WhatsApp. O formulário e a mensagem informam que a reserva depende da aprovação da Black White Festas.
+
+A abertura do WhatsApp não cria nem confirma registros no banco. A empresa analisa o pedido, cadastra a reserva no painel como **Pendente** e, após aprovar, usa **Confirmar**. A confirmação verifica os conflitos no servidor e atualiza a disponibilidade compartilhada. A resposta ao cliente é feita pela empresa no WhatsApp.
+
 ## Calendário público
 
-`api/availability.php?month=AAAA-MM` fornece somente a situação de cada equipamento, sem nomes, telefones ou endereços. O site atualiza a consulta a cada 30 segundos enquanto está visível e ao voltar para a aba.
+`api/availability.php?month=AAAA-MM` fornece somente a situação de cada equipamento, sem nomes, telefones ou endereços. O site e o painel administrativo atualizam a consulta a cada 30 segundos enquanto estão visíveis, ao voltar para a aba e ao recuperar a conexão. Após salvar no painel, a agenda desse painel é atualizada imediatamente; nos demais dispositivos, a alteração aparece na próxima consulta (até 30 segundos com conexão ativa). A atualização automática preserva os formulários em edição.
 
 Sem horários informados, a disponibilidade pública é por **dia inteiro**: qualquer reserva, manutenção ou intervalo de transporte naquele dia marca o equipamento indisponível. Ao informar instalação e retirada, o site consulta o período exato e inclui a margem de transporte. O calendário administrativo mostra os dias ocupados e, nos detalhes de cada registro, o horário de liberação.
 
 Antes do primeiro administrador ser criado, a API retorna disponibilidade desconhecida.
 
 ## Persistência e publicação
+
+Todos os dispositivos devem acessar o mesmo endereço do servidor PHP: celular, tablet e computador consultam a mesma base. Na rede local, use o IP do computador que executa o MAMP e a porta configurada; para acesso pela internet, publique a aplicação em um servidor PHP com armazenamento persistente. Cópias do projeto executadas em servidores separados terão bancos independentes.
 
 O banco fica em `.private/reservas.sqlite`, excluído do Git. Não apague esse arquivo: ele contém usuários e reservas. Faça cópias de segurança regulares do banco com o servidor parado ou usando a ferramenta de backup do SQLite.
 

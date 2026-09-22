@@ -168,7 +168,7 @@
       <h2 class="section-title">Monte sua reserva</h2>
       <p class="section-lead">
         Escolha um ou mais brinquedos e a região da festa: o valor da entrega é calculado na hora.
-        Você confirma tudo com a gente pelo WhatsApp antes de fechar.
+        A reserva só será confirmada após a aprovação da Black White Festas pelo WhatsApp.
       </p>
 
       <form class="reserva__form" id="reservaForm">
@@ -179,10 +179,13 @@
             <div class="reserva__campos">
 <label class="campo">
             <span>Seu nome</span>
-            <input type="text" id="rNome" autocomplete="name" required placeholder="Como podemos te chamar?">
+            <input type="text" id="rNome" autocomplete="name" maxlength="120" required placeholder="Como podemos te chamar?">
           </label>
 
-
+          <label class="campo">
+            <span>Telefone / WhatsApp</span>
+            <input type="tel" id="rTelefone" autocomplete="tel" maxlength="40" required placeholder="(41) 99999-9999">
+          </label>
 
           <label class="campo">
             <span>Região da festa</span>
@@ -296,8 +299,8 @@
           </div>
         </div>
         <div class="reserva__finalizar">
-          <p class="reserva__confirmacao"><strong>Quase tudo pronto para a diversão.</strong><span>Envie seu pedido e confirme a disponibilidade com a gente.</span></p>
-<button type="submit" class="btn btn--whatsapp reserva__btn">Enviar pedido pelo WhatsApp</button>
+          <p class="reserva__confirmacao"><strong>Quase tudo pronto para a diversão.</strong><span>Enviar a solicitação não confirma a reserva. Aguarde a aprovação da Black White Festas pelo WhatsApp.</span></p>
+<button type="submit" class="btn btn--whatsapp reserva__btn">Solicitar reserva pelo WhatsApp</button>
         <p class="reserva__aviso">
           Valor estimado com base na nossa tabela de taxa de entrega a partir de Guaraituba, Colombo/PR.
           Pode variar conforme quantidade de brinquedos, horário do evento, montagem/desmontagem e local de difícil acesso — confirmamos tudo com você antes de fechar.

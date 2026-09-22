@@ -1,6 +1,7 @@
 const $ = (id) => document.getElementById(id);
 const statuses = { pending: 'Pendente', confirmed: 'Confirmada', cancelled: 'Cancelada' };
 let csrf = '', setup = false, records = [], catalog = {}, month = new Date(new Date().getFullYear(), new Date().getMonth(), 1), selectedDay = '', turnaround = 120;
+let loadVersion = 0, syncing = false;
 const pad = (n) => String(n).padStart(2, '0');
 const dayKey = (d) => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
 const format = (s) => new Date(s).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' });
@@ -12,6 +13,7 @@ function applySession(session) {
   $('loginForm').elements.password.minLength=setup?12:0;
   $('loginForm').elements.password.autocomplete=setup?'new-password':'current-password';
   if (!session.authenticated) {
+    loadVersion++;
     $('editor').close();$('bookingForm').reset();records=[];
     $('rows').replaceChildren();$('dayDetails').replaceChildren();$('calendar').replaceChildren();
     $('dashboard').hidden=true;$('logout').hidden=true;$('loginPanel').hidden=false;
@@ -33,8 +35,13 @@ async function api(action, body) {
   return result;
 }
 function el(tag,text,cls) { const node=document.createElement(tag); if(text!==undefined)node.textContent=text; if(cls)node.className=cls; return node; }
-async function load() {
-  const result=await api('list');records=result.bookings;catalog=result.toys;turnaround=result.turnaroundMinutes;$('turnaround').value=turnaround;
+async function load(background=false) {
+  const version=++loadVersion;
+  const result=await api('list');
+  if (version!==loadVersion) return;
+  records=result.bookings;catalog=result.toys;turnaround=result.turnaroundMinutes;
+  // A consulta automática preserva os valores que o administrador está editando.
+  if (!background) $('turnaround').value=turnaround;
   if (!$('toyFilter').options.length) {
     for(const [id,name] of Object.entries(catalog)) { const option=el('option',name); option.value=id;$('toyFilter').append(option);
       const label=el('label');const input=el('input');input.type='checkbox';input.name='toys';input.value=id;label.append(input,document.createTextNode(name));$('toyChoices').append(label); }
@@ -103,3 +110,18 @@ $('settingsForm').addEventListener('submit',async(event)=>{
   try { await api('settings',{turnaroundMinutes:Number($('turnaround').value)});await load();$('message').textContent='Margem atualizada.'; }
   catch(error){$('message').textContent=error.message;} finally{button.disabled=false;}
 });
+
+// Todos os dispositivos consultam a mesma base do servidor.
+async function syncCalendar() {
+  if (document.hidden || $('dashboard').hidden || syncing) return;
+  syncing=true;
+  try {
+    await load(true);
+    if ($('message').textContent==='Não foi possível sincronizar a agenda. Tentaremos novamente automaticamente.') $('message').textContent='';
+  } catch (error) {
+    if (!$('dashboard').hidden) $('message').textContent='Não foi possível sincronizar a agenda. Tentaremos novamente automaticamente.';
+  } finally { syncing=false; }
+}
+setInterval(syncCalendar,30000);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)syncCalendar();});
+window.addEventListener('online',syncCalendar);

@@ -428,5 +428,6 @@ if (typeof document !== 'undefined') (() => {
     lastToday = today;
   }, 30000);
   document.addEventListener('visibilitychange', () => { if (!document.hidden) refresh(); });
+  window.addEventListener('online', () => { if (!document.hidden) refresh(); });
   refresh();
 })();

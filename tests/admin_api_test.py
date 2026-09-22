@@ -86,5 +86,28 @@ assert november['days']['2026-11-01']['cama-g']=='unavailable'
 after_maintenance={**record,'id':0,'status':'confirmed','toys':['cama-p'],'start':'2026-10-14T18:00','end':'2026-10-14T19:00'}
 call('/api/admin.php?action=save',after_maintenance)
 call('/api/admin.php?action=save',{**after_maintenance,'id':0,'start':'2026-10-14T17:59'},expected=409)
+# Outro navegador, com cookies e autenticação independentes, vê a mesma base.
+first_client, first_csrf = client, csrf
+client = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(http.cookiejar.CookieJar()))
+csrf = call('/api/admin.php?action=session')['csrf']
+assert not call('/api/admin.php?action=session')['authenticated']
+csrf = call('/api/admin.php?action=login', {'username':'test-admin','password':password})['csrf']
+second_client, second_csrf = client, csrf
+shared = {**record, 'id':0, 'status':'pending', 'start':'2027-02-10T09:00', 'end':'2027-02-10T18:00'}
+client, csrf = first_client, first_csrf
+shared['id'] = call('/api/admin.php?action=save', shared)['id']
+for status, day in [('confirmed','10'), ('confirmed','12'), ('cancelled','12')]:
+    shared.update(status=status, start=f'2027-02-{day}T09:00', end=f'2027-02-{day}T18:00')
+    call('/api/admin.php?action=save', shared)
+    client, csrf = second_client, second_csrf
+    stored = next(r for r in call('/api/admin.php?action=list')['bookings'] if r['id']==shared['id'])
+    assert stored['status']==status and stored['start']==shared['start']
+    # Leitura pública sem cookies, como um visitante em outro dispositivo.
+    with urllib.request.urlopen(BASE+'/api/availability.php?month=2027-02') as response:
+        assert response.headers['Cache-Control']=='no-store'
+        days = json.load(response)['days']
+    assert days[f'2027-02-{day}']['cama-g']==('available' if status=='cancelled' else 'unavailable')
+    if day=='12': assert days['2027-02-10']['cama-g']=='available'
+    client, csrf = first_client, first_csrf
 call('/api/admin.php?action=logout',{})
 print('OK: setup, autenticação, CSRF, CRUD, conflitos, manutenção, isolamento por brinquedo, privacidade e persistência.')

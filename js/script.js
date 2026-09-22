@@ -85,6 +85,7 @@ reservaForm?.addEventListener('submit', (evento) => {
   if (!reservaForm.reportValidity()) return;
 
   const nome = document.getElementById('rNome').value.trim();
+  const telefone = document.getElementById('rTelefone').value.trim();
   const endereco = document.getElementById('rEndereco').value.trim();
   const instalacao = document.getElementById('rInstalacao').value;
   const desinstalacao = document.getElementById('rDesinstalacao').value;
@@ -101,17 +102,27 @@ reservaForm?.addEventListener('submit', (evento) => {
     return;
   }
 
+  const formatarHorario = (valor) => {
+    const [data, hora] = valor.split('T');
+    return `${data.split('-').reverse().join('/')} às ${hora}`;
+  };
   const preco = subtotalBrinquedos();
   const mensagem = [
-    'Oi! Quero pedir um orçamento para uma festa.',
+    'Olá! Quero solicitar uma reserva para minha festa.',
     `Nome: ${nome}`,
+    `Telefone / WhatsApp: ${telefone}`,
     'Brinquedos:',
     ...brinquedosSelecionados().map((brinquedo) => `- ${brinquedo.closest('label').querySelector('.brinquedo-nome').textContent.trim()}`),
     `Região: ${regiao.value}`,
     `Endereço: ${endereco}`,
-    `Instalação: ${instalacao.replace('T', ' ')}`,
-    `Desinstalação: ${desinstalacao.replace('T', ' ')}`,
-    `Total estimado: ${moeda(preco + Number(taxa))}`
+    `Instalação: ${formatarHorario(instalacao)}`,
+    `Retirada: ${formatarHorario(desinstalacao)}`,
+    `Subtotal dos brinquedos: ${moeda(preco)}`,
+    `Taxa de entrega: ${moeda(Number(taxa))}`,
+    `Total estimado: ${moeda(preco + Number(taxa))}`,
+    '',
+    'Solicitação sujeita à disponibilidade e à aprovação da Black White Festas.',
+    'A reserva só será confirmada após a aprovação da empresa. Aguardo a confirmação dos valores e horários.'
   ].join('\n');
 
   window.open(`https://wa.me/5541995960567?text=${encodeURIComponent(mensagem)}`, '_blank', 'noopener');

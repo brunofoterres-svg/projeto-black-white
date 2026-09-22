@@ -1009,3 +1009,47 @@ main > section:not(.hero) .party-star--two { right: 7%; bottom: 35px; font-size:
 .calendario .calendario__outra-data { display: block; width: 100%; margin: 12px 0 6px; padding: 11px; border: 1px solid #272727; border-radius: 9px; background: #222; color: #fff; font-size: .75rem; }
 .calendario .calendario__manter-disponiveis { display: block; width: 100%; padding: 10px 0; }
 .calendario .calendario__manter-disponiveis:disabled { opacity: .6; text-decoration: none; }
+
+/* Agenda responsiva: identidade neutra, dourado no foco e na seleção. */
+:root { --dourado: #b8860b; }
+:focus-visible { outline-color: var(--dourado); }
+.campo input:focus, .campo select:focus {
+  outline: 3px solid #b8860b33;
+  border-color: var(--dourado);
+}
+.reserva__escolha .brinquedo-opcao:has(input:focus-visible) { outline-color: var(--dourado); }
+.reserva__layout { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.reserva__campos > *, .reserva__finalizar > * { min-width: 0; }
+.calendario { border-top: 3px solid var(--dourado); }
+.calendario__topo { flex-wrap: wrap; }
+.calendario__nav { display: grid; grid-template-columns: 44px minmax(0, 1fr) 44px; }
+.calendario__nav button { width: 44px; height: 44px; }
+.calendario__hoje { min-height: 44px; }
+.calendario__nav strong { overflow-wrap: anywhere; }
+.calendario__semana, .calendario__dias { gap: 4px; }
+.calendario__dia { min-height: 60px; touch-action: manipulation; }
+.calendario__status, .calendario__indicadores-legenda,
+.calendario__detalhes, .calendario__sugestoes { overflow-wrap: anywhere; }
+.calendario__sugestoes button { min-height: 44px; white-space: normal; }
+.nav-toggle { width: 44px; height: 44px; }
+
+@media (max-width: 980px) {
+  .reserva__layout { grid-template-columns: minmax(0, 1fr); }
+  .reserva__escolha { border-left: 0; border-top: 1px solid #e8e8e2; }
+  .reserva__finalizar { grid-template-columns: minmax(0, 1fr); }
+  .reserva__finalizar .reserva__btn { width: 100%; white-space: normal; }
+}
+@media (max-width: 480px) {
+  .container { padding-left: 12px; padding-right: 12px; }
+  .reserva__dados, .reserva__escolha, .reserva__finalizar { padding: 20px 12px; }
+  .calendario { padding: 12px 8px; border-radius: 14px; }
+  .calendario__semana, .calendario__dias { gap: 3px; }
+  .calendario__dia { border-radius: 7px; padding: 3px 1px; }
+  .calendario__detalhes li { grid-template-columns: 7px minmax(0, 1fr); font-size: .78rem; }
+  .calendario__situacao { grid-column: 2; text-align: left; font-size: .72rem; }
+  .calendario__legenda, .calendario__indicadores-legenda { font-size: .72rem; }
+  .calendario__sugestoes { padding: 12px 8px; }
+  .reserva__linha { flex-wrap: wrap; }
+  .reserva__linha strong { margin-left: auto; }
+  .brinquedo-nome { min-width: 0; overflow-wrap: anywhere; }
+}
