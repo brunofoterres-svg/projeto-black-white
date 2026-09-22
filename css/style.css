@@ -13,18 +13,7 @@
   --amarelo: #ffc229;
   --verde: #2fa84f;
 
-  --fonte-titulo: 'Baloo 2', sans-serif;
-  --fonte-texto: 'Inter', sans-serif;
-
-  --raio: 14px;
-  --largura-max: 1180px;
-}
-
-* { box-sizing: border-box; }
-
-html { scroll-behavior: smooth; }
-
-body {
+  --raio: 14x;
   margin: 0;
   font-family: var(--fonte-texto);
   color: var(--preto);
