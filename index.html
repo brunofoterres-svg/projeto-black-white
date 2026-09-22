@@ -214,6 +214,34 @@
             <input type="text" id="rEndereco" required placeholder="Rua, número, bairro, cidade">
           </label>
 
+          <section class="calendario" id="calendarioReserva" data-availability-url="api/availability.php" aria-label="Calendário da reserva">
+            <div class="calendario__topo">
+              <h4>Escolha o dia da festa</h4>
+              <button type="button" id="calHoje" class="calendario__hoje">Hoje</button>
+            </div>
+            <div class="calendario__nav">
+              <button type="button" id="calAnterior" aria-label="Mês anterior">←</button>
+              <strong id="calMes" aria-live="polite"></strong>
+              <button type="button" id="calProximo" aria-label="Próximo mês">→</button>
+            </div>
+            <div class="calendario__semana" aria-hidden="true"><span>D</span><span>S</span><span>T</span><span>Q</span><span>Q</span><span>S</span><span>S</span></div>
+            <div class="calendario__dias" id="calDias" role="group" aria-labelledby="calMes"></div>
+            <p class="calendario__indicadores-legenda" id="calIndicadoresLegenda"></p>
+            <div class="calendario__legenda" aria-label="Legenda para os brinquedos selecionados">
+              <span><i class="calendario__amostra calendario__amostra--available" aria-hidden="true"></i>Todos disponíveis</span>
+              <span><i class="calendario__amostra calendario__amostra--partial" aria-hidden="true"></i>Disponibilidade parcial</span>
+              <span><i class="calendario__amostra calendario__amostra--unavailable" aria-hidden="true"></i>Todos indisponíveis</span>
+              <span><i class="calendario__amostra calendario__amostra--blocked" aria-hidden="true"></i>Passada ou bloqueada</span>
+              <span><i class="calendario__amostra calendario__amostra--selected" aria-hidden="true"></i>Data selecionada</span>
+              <span><i class="calendario__amostra calendario__amostra--unknown" aria-hidden="true">–</i>A confirmar</span>
+              <span>◯ Hoje</span>
+            </div>
+            <p id="calStatus" class="calendario__status" role="status">Disponibilidade a confirmar pelo WhatsApp.</p>
+            <div class="calendario__detalhes" id="calDetalhes" aria-live="polite" hidden></div>
+            <div class="calendario__sugestoes" id="calSugestoes" aria-live="polite" hidden></div>
+            <p class="calendario__dica">Ao selecionar o dia, confira o horário sugerido abaixo e informe a retirada. A seleção não confirma a reserva.</p>
+          </section>
+
           <label class="campo">
             <span>Data e horário da instalação</span>
             <input type="datetime-local" id="rInstalacao" required>
@@ -228,26 +256,26 @@
           <div class="reserva__escolha">
           <fieldset class="campo campo--brinquedos" aria-describedby="brinquedosAjuda">
             <legend><span class="reserva__etapa" aria-hidden="true">02</span> Escolha a diversão</legend>
-            <p id="brinquedosAjuda">Marque um ou mais brinquedos para sua festa.</p>
+            <p id="brinquedosAjuda">Escolha a data no calendário e marque os brinquedos. A disponibilidade é individual.</p>
             <label class="brinquedo-opcao">
               <input type="checkbox" name="brinquedos" value="cama-p" data-preco="130" checked>
-              <span>Cama elástica P — R$ 130,00</span>
+              <span class="brinquedo-nome">Cama elástica P — R$ 130,00</span>
             </label>
             <label class="brinquedo-opcao">
               <input type="checkbox" name="brinquedos" value="cama-m" data-preco="150">
-              <span>Cama elástica M — R$ 150,00</span>
+              <span class="brinquedo-nome">Cama elástica M — R$ 150,00</span>
             </label>
             <label class="brinquedo-opcao">
               <input type="checkbox" name="brinquedos" value="cama-g" data-preco="180">
-              <span>Cama elástica G — R$ 180,00</span>
+              <span class="brinquedo-nome">Cama elástica G — R$ 180,00</span>
             </label>
             <label class="brinquedo-opcao">
               <input type="checkbox" name="brinquedos" value="castelinho" data-preco="250">
-              <span>Castelinho inflável — R$ 250,00</span>
+              <span class="brinquedo-nome">Castelinho inflável — R$ 250,00</span>
             </label>
             <label class="brinquedo-opcao">
               <input type="checkbox" name="brinquedos" value="piscina" data-preco="130">
-              <span>Piscina de bolinhas — R$ 130,00</span>
+              <span class="brinquedo-nome">Piscina de bolinhas — R$ 130,00</span>
             </label>
           </fieldset>
 <div class="reserva__resumo" aria-live="polite" aria-atomic="true">
@@ -262,7 +290,7 @@
           </div>
           <div class="reserva__linha reserva__linha--total">
             <span>Total estimado</span>
-            <strong id="resumoTotal">—</strong>
+            <strong id="resumoTotal" tabindex="-1">—</strong>
           </div>
         </div>
           </div>
@@ -373,6 +401,7 @@
         <h3>Fale com a gente</h3>
         <a href="https://wa.me/5541995960567" class="rodape__link" target="_blank" rel="noopener">(41) 99596-0567</a>
         <a href="#" class="rodape__link" id="instagramLink">@blackwhitefestas</a>
+        <a href="admin/" class="rodape__link">Área administrativa</a>
       </div>
     </div>
     <div class="rodape__base">
@@ -381,5 +410,6 @@
   </footer>
 
   <script src="js/script.js"></script>
+  <script src="js/calendar.js"></script>
 </body>
 </html>

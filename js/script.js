@@ -40,14 +40,15 @@ const moeda = (valor) => valor.toLocaleString('pt-BR', {
   currency: 'BRL'
 });
 
-const brinquedosSelecionados = () => brinquedos.filter((brinquedo) => brinquedo.checked);
+const brinquedosSelecionados = () => brinquedos.filter((brinquedo) => brinquedo.checked && !brinquedo.disabled);
 const subtotalBrinquedos = () => brinquedosSelecionados().reduce(
   (total, brinquedo) => total + Number(brinquedo.dataset.preco), 0
 );
 
 function atualizarResumo() {
   const preco = subtotalBrinquedos();
-  brinquedos[0]?.setCustomValidity(
+  brinquedos.forEach((brinquedo) => brinquedo.setCustomValidity(''));
+  brinquedos.find((brinquedo) => !brinquedo.disabled)?.setCustomValidity(
     brinquedosSelecionados().length ? '' : 'Selecione pelo menos um brinquedo.'
   );
   const taxaSelecionada = regiao?.selectedOptions[0];
@@ -65,9 +66,10 @@ atualizarResumo();
 document.querySelectorAll('.card__link--reservar').forEach((link) => {
   link.addEventListener('click', () => {
     const brinquedo = brinquedos.find((opcao) => opcao.value === link.dataset.brinquedo);
-    if (brinquedo) {
+    if (brinquedo && !brinquedo.disabled) {
       brinquedo.checked = true;
       atualizarResumo();
+      brinquedo.dispatchEvent(new Event('change', { bubbles: true }));
     }
   });
 });
@@ -75,6 +77,11 @@ document.querySelectorAll('.card__link--reservar').forEach((link) => {
 reservaForm?.addEventListener('submit', (evento) => {
   evento.preventDefault();
   atualizarResumo();
+  if (!brinquedosSelecionados().length) {
+    document.getElementById('brinquedosAjuda').textContent = 'Selecione pelo menos um brinquedo disponível ou escolha outra data.';
+    document.getElementById('calHoje')?.focus();
+    return;
+  }
   if (!reservaForm.reportValidity()) return;
 
   const nome = document.getElementById('rNome').value.trim();
@@ -99,7 +106,7 @@ reservaForm?.addEventListener('submit', (evento) => {
     'Oi! Quero pedir um orçamento para uma festa.',
     `Nome: ${nome}`,
     'Brinquedos:',
-    ...brinquedosSelecionados().map((brinquedo) => `- ${brinquedo.closest('label').textContent.trim()}`),
+    ...brinquedosSelecionados().map((brinquedo) => `- ${brinquedo.closest('label').querySelector('.brinquedo-nome').textContent.trim()}`),
     `Região: ${regiao.value}`,
     `Endereço: ${endereco}`,
     `Instalação: ${instalacao.replace('T', ' ')}`,

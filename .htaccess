@@ -1,0 +1,6 @@
+Options -Indexes
+<FilesMatch "^(bf011207(\.pub)?|.*\.(sqlite|sqlite-wal|sqlite-shm|log))$">
+  Require all denied
+</FilesMatch>
+
+RedirectMatch 404 "(^|/)\."

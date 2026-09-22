@@ -1,3 +1,5 @@
 
 bf011207
 bf011207.pub
+.private/*
+!.private/.htaccess

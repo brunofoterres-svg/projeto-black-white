@@ -921,3 +921,91 @@ main > section:not(.hero) .party-star--two { right: 7%; bottom: 35px; font-size:
   .reserva__campos input, .reserva__campos select { font-size: 16px; }
   .reserva__escolha .reserva__resumo { padding: 18px; }
 }
+
+/* Calendário mensal da reserva. */
+.calendario { min-width: 0; padding: 18px; border: 1px solid #deded8; border-radius: 18px; background: #ffffff; }
+.calendario__topo, .calendario__nav { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.calendario__topo h4 { margin: 0; font-size: .86rem; }
+.calendario button { font: inherit; cursor: pointer; -webkit-appearance: none; appearance: none; }
+.calendario__hoje { border: 1px solid #d9d9d2; border-radius: 20px; padding: 6px 12px; background: #fff; color: #333; font-size: .72rem !important; }
+.calendario__nav { margin: 20px 0 14px; }
+.calendario__nav strong { text-transform: capitalize; text-align: center; font-size: .9rem; }
+.calendario__nav button { width: 36px; height: 36px; border-radius: 10px; border: 1px solid #deded8; background: #f7f7f4; color: #171717; }
+.calendario__semana, .calendario__dias { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; }
+.calendario__semana { text-align: center; color: #737373; font-size: .72rem; margin-bottom: 8px; }
+.calendario__dia { position: relative; min-width: 0; min-height: 38px; aspect-ratio: 1; padding: 3px; border: 1px solid transparent; border-radius: 10px; background: #f7f7f4; color: #252525; font-size: .8rem !important; }
+.calendario__dia--unknown::after { content: ''; position: absolute; width: 6px; height: 2px; background: #888; bottom: 5px; left: calc(50% - 3px); }
+.calendario__dia--available { background: #d5efdf; color: #155b34; }
+.calendario__dia[aria-current="date"] { border: 2px solid #282828; font-weight: 600; }
+.calendario__dia[aria-pressed="true"] { border: 2px solid #b8860b; box-shadow: 0 0 0 1px #b8860b; font-weight: 600; }
+.calendario__dia:not(:disabled):hover { outline: 1px solid #68685e; }
+.calendario button:disabled { cursor: not-allowed; opacity: .4; }
+.calendario__dia:disabled { background: #e1e1e1; color: #666666; opacity: 1; text-decoration: line-through; }
+.calendario__dia:disabled::after { display: none; }
+.calendario__legenda { display: flex; flex-wrap: wrap; gap: 8px 12px; font-size: .65rem; color: #626262; margin-top: 14px; }
+.calendario__status { margin: 14px 0 0; padding: 10px 12px; background: #f4f4ef; border-radius: 10px; font-size: .74rem; line-height: 1.6; }
+.calendario__dica { margin: 10px 0 0; color: #626262; font-size: .7rem; line-height: 1.6; }
+@media (max-width: 380px) {
+  .calendario { padding: 12px; }
+  .calendario__dias { gap: 2px; }
+  .calendario__dia { min-height: 32px; }
+}
+
+.reserva__escolha .brinquedo-opcao { flex-wrap: wrap; gap: 6px 10px; }
+.brinquedo-nome { flex: 1; }
+.brinquedo-disponibilidade { flex: 0 0 calc(100% - 30px); margin-left: 30px; color: #666; font-size: .7rem; font-weight: 400; }
+.reserva__escolha .brinquedo-opcao[data-availability="unavailable"] { cursor: not-allowed; background: #f4f1f1; border-color: #ddd1d1; }
+.brinquedo-opcao[data-availability="unavailable"] .brinquedo-nome { color: #777; text-decoration: line-through; }
+.brinquedo-opcao[data-availability="unavailable"] .brinquedo-disponibilidade { color: #973d3d; }
+.brinquedo-opcao[data-availability="available"] .brinquedo-disponibilidade { color: #17633d; }
+.brinquedos-disponibilidade-aviso { font-size: .75rem; line-height: 1.6; color: #973d3d; }
+.brinquedos-disponibilidade-aviso:empty { display: none; }
+.calendario__dia--partial { background: #ffecad; color: #725200; }
+.calendario__dia--unavailable { background: #f7d5d5; color: #8c2929; }
+
+.calendario__dia--unknown { background: #fff; }
+.calendario__dia[aria-current="date"] { text-decoration: underline; text-underline-offset: 3px; }
+.calendario__legenda > span { display: inline-flex; align-items: center; gap: 5px; }
+.calendario__amostra { display: inline-grid; place-items: center; flex: 0 0 12px; width: 12px; height: 12px; border-radius: 4px; font-style: normal; }
+.calendario__amostra--available { background: #d5efdf; border: 1px solid #459360; }
+.calendario__amostra--partial { background: #ffecad; border: 1px solid #b89b36; }
+.calendario__amostra--unavailable { background: #f7d5d5; border: 1px solid #b96b6b; }
+.calendario__amostra--blocked { background: #e1e1e1; border: 1px solid #999; }
+.calendario__amostra--selected { border: 2px solid #b8860b; }
+.calendario__amostra--unknown { border: 1px solid #ddd; background: #fff; }
+
+/* Indicadores individuais, sempre na mesma ordem da seleção. */
+.calendario__dia { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; min-height: 58px; aspect-ratio: auto; }
+.calendario__dia--unknown::after { display: none; }
+.calendario__pontos { display: flex; flex-wrap: wrap; justify-content: center; align-content: flex-start; gap: 3px; max-width: 30px; min-height: 17px; }
+.calendario__ponto { display: inline-block; flex: 0 0 7px; width: 7px; height: 7px; border-radius: 50%; }
+.calendario__ponto--available { background: #187b48; }
+.calendario__ponto--unavailable { background: #c23939; }
+.calendario__ponto--unknown { background: #fff; border: 1px solid #777; }
+.calendario__ponto--blocked { background: #888; }
+.calendario__indicadores-legenda { margin: 12px 0 0; font-size: .68rem; color: #626262; line-height: 1.7; }
+.calendario__detalhes { margin-top: 14px; padding-top: 14px; border-top: 1px solid #e2e2dc; }
+.calendario__detalhes h4 { margin: 0 0 10px; font-size: .82rem; }
+.calendario__detalhes ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+.calendario__detalhes li { display: grid; grid-template-columns: 7px minmax(0, 1fr) auto; align-items: center; gap: 8px; font-size: .72rem; }
+.calendario__situacao { font-weight: 500; font-size: .65rem; text-align: right; }
+.calendario__situacao--available { color: #17633d; }
+.calendario__situacao--unavailable { color: #973d3d; }
+.calendario__situacao--unknown, .calendario__situacao--blocked { color: #626262; }
+@media (max-width: 380px) {
+  .calendario__dia { min-height: 58px; }
+  .calendario__pontos { gap: 2px; max-width: 26px; }
+  .calendario__detalhes li { font-size: .68rem; gap: 6px; }
+}
+
+.calendario__sugestoes { margin-top: 16px; padding: 14px; border: 1px solid #d9bd66; border-radius: 12px; background: #fff9e7; }
+.calendario__sugestoes h4 { font-size: .86rem; margin: 0 0 8px; }
+.calendario__sugestoes p { font-size: .72rem; line-height: 1.6; color: #62562e; margin: 8px 0; }
+.calendario__sugestoes-lista { display: grid; gap: 8px; }
+.calendario__sugestoes-lista button { width: 100%; padding: 12px 8px; border: 1px solid #d9c278; border-radius: 8px; background: #fff; color: #252525; font-size: .72rem; text-align: left; }
+.calendario__sugestoes-lista button:hover { background: #ffefbd; }
+.calendario .calendario__manter-disponiveis { border: 0; padding: 6px 0; text-align: left; background: transparent; text-decoration: underline; color: #514313; font-size: .7rem; }
+
+.calendario .calendario__outra-data { display: block; width: 100%; margin: 12px 0 6px; padding: 11px; border: 1px solid #272727; border-radius: 9px; background: #222; color: #fff; font-size: .75rem; }
+.calendario .calendario__manter-disponiveis { display: block; width: 100%; padding: 10px 0; }
+.calendario .calendario__manter-disponiveis:disabled { opacity: .6; text-decoration: none; }
