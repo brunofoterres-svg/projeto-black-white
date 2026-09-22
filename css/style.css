@@ -3,6 +3,9 @@
    ========================================================= */
 
 :root {
+  --fonte-titulo: 'Baloo 2', sans-serif;
+  --fonte-texto: 'Inter', sans-serif;
+  --largura-max: 1180px;
   --preto: #0a0a0a;
   --branco: #ffffff;
   --off-white: #f6f5f1;
@@ -13,7 +16,18 @@
   --amarelo: #ffc229;
   --verde: #2fa84f;
 
-  --raio: 14x;
+  --raio: 14px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
   margin: 0;
   font-family: var(--fonte-texto);
   color: var(--preto);
@@ -209,6 +223,12 @@ h1, h2, h3 {
   object-fit: cover;
 }
 
+.hero__logo {
+  width: min(100%, 360px);
+  border-radius: var(--raio);
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.18);
+}
+
 /* ---------- seções genéricas ---------- */
 
 .section-title {
@@ -307,6 +327,123 @@ h1, h2, h3 {
 }
 
 .card__link:hover { color: var(--vermelho); border-color: var(--vermelho); }
+
+/* ---------- reserva ---------- */
+
+.reserva {
+  padding: 100px 0;
+  background: var(--branco);
+}
+
+.reserva__form {
+  max-width: 900px;
+  margin: 48px auto 0;
+}
+
+.reserva__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  font-weight: 600;
+}
+
+.campo input,
+.campo select {
+  width: 100%;
+  min-height: 48px;
+  padding: 11px 13px;
+  border: 1px solid #cfcfcf;
+  border-radius: 8px;
+  background: var(--off-white);
+  color: var(--preto);
+  font: inherit;
+}
+
+.campo input:focus,
+.campo select:focus {
+  outline: 3px solid rgba(47, 95, 224, 0.2);
+  border-color: var(--azul);
+}
+
+.reserva__grid .campo:nth-child(4) {
+  grid-column: 1 / -1;
+}
+
+.reserva__resumo {
+  margin-top: 30px;
+  padding: 22px;
+  border: 2px solid var(--preto);
+  border-radius: var(--raio);
+}
+
+.reserva__linha {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 10px 0;
+}
+
+.reserva__linha--total {
+  margin-top: 8px;
+  padding-top: 16px;
+  border-top: 1px solid #d7d7d7;
+  font-size: 1.15rem;
+}
+
+.reserva__btn {
+  margin-top: 22px;
+  border: 0;
+  cursor: pointer;
+}
+
+.reserva__aviso {
+  color: var(--cinza);
+  font-size: 0.82rem;
+  margin: 16px 0 0;
+}
+
+/* ---------- galeria e feedbacks ---------- */
+
+.galeria,
+.feedbacks {
+  padding: 100px 0;
+}
+
+.galeria { background: var(--off-white); }
+
+.galeria__grid,
+.feedbacks__grid {
+  margin-top: 48px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.video-placeholder,
+.feedback-placeholder {
+  min-height: 230px;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  border: 2px dashed #bdbdbd;
+  border-radius: var(--raio);
+  background: var(--branco);
+  color: var(--cinza);
+  text-align: center;
+}
+
+.feedback-placeholder {
+  min-height: 160px;
+  border-style: solid;
+  border-top: 5px solid var(--amarelo);
+  font-weight: 600;
+}
 
 /* ---------- como funciona ---------- */
 
@@ -426,6 +563,16 @@ h1, h2, h3 {
 }
 
 @media (max-width: 760px) {
+  .reserva__grid,
+  .galeria__grid,
+  .feedbacks__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .reserva__grid .campo:nth-child(4) {
+    grid-column: auto;
+  }
+
   .nav {
     position: absolute;
     top: 100%;
