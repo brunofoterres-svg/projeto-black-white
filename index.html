@@ -33,17 +33,25 @@
         Chamar no WhatsApp
       </a>
 
-      <button class="nav-toggle" id="navToggle" aria-label="Abrir menu" aria-expanded="false">
+      <button class="nav-toggle" id="navToggle" aria-controls="nav" aria-label="Abrir menu" aria-expanded="false">
         <span></span><span></span><span></span>
       </button>
     </div>
   </header>
 
   <!-- ===== HERO ===== -->
+  <main>
   <section class="hero" id="topo">
+    <div class="party-decor" aria-hidden="true">
+      <span class="balloon balloon--one"></span>
+      <span class="balloon balloon--two"></span>
+      <span class="balloon balloon--three"></span>
+      <span class="party-star party-star--one">✦</span>
+      <span class="party-star party-star--two">✦</span>
+    </div>
     <div class="hero__black">
-      <p class="hero__kicker">Locação de brinquedos para festas</p>
-      <h1 class="hero__title">A festa só começa<br>quando a criançada<br>não para de pular.</h1>
+      <p class="hero__kicker">Curitiba e região · Diversão que vai até você</p>
+      <h1 class="hero__title">Pequenos pulos.<br><span>Grandes sorrisos.</span></h1>
       <p class="hero__text">
         Cama elástica, pula-pula inflável e piscina de bolinhas, entregues,
         montados e desmontados por nós. Você só se preocupa em curtir a festa.
@@ -53,23 +61,36 @@
            class="btn btn--whatsapp" target="_blank" rel="noopener">Pedir orçamento</a>
         <a href="#brinquedos" class="btn btn--ghost">Ver brinquedos</a>
       </div>
+      <div class="hero__perks"><span>✓ Entrega e montagem</span><span>✓ Diversão para todas as festas</span></div>
     </div>
     <div class="hero__white">
-      <img src="images/logo.jpg" alt="Black White Festas" class="hero__logo">
+      <div class="hero__photo">
+        <img src="images/logo.jpg" alt="Black White Festas — locação de cama elástica e brinquedos" class="hero__logo" fetchpriority="high" width="1536" height="1024">
+        <span class="hero__photo-label">Aqui a diversão pula alto! <span aria-hidden="true">↗</span></span>
+      </div>
+      <div class="hero__sticker"><span aria-hidden="true">✦</span> Seu dia.<br>Sua festa.<br><strong>Muita alegria!</strong></div>
     </div>
   </section>
+  <div class="party-strip" aria-label="Nossos serviços">
+    <span>Cama elástica</span><span aria-hidden="true">✦</span><span>Castelinho inflável</span><span aria-hidden="true">✦</span><span>Piscina de bolinhas</span><span aria-hidden="true">✦</span><span>Memórias felizes</span>
+  </div>
 
   <!-- ===== BRINQUEDOS ===== -->
   <section class="produtos" id="brinquedos">
+    <div class="party-decor" aria-hidden="true">
+      <span class="balloon balloon--one"></span><span class="balloon balloon--two"></span>
+      <span class="party-star party-star--one">✦</span><span class="party-star party-star--two">✦</span>
+    </div>
     <div class="container">
-      <h2 class="section-title">O que a gente leva pra sua festa</h2>
+      <p class="section-eyebrow">O próximo pulo de alegria</p>
+      <h2 class="section-title">Tem diversão para cada festa.</h2>
       <p class="section-lead">Todos os brinquedos são revisados antes de cada evento e vêm com rede de proteção.</p>
 
       <div class="produtos__grid">
 
         <article class="card card--roxo">
           <div class="card__img">
-            <img src="images/cama-elastica-m.jpg" alt="Cama elástica P, com rede de proteção colorida">
+            <img loading="lazy" src="images/cama%20elastica%20p.jpeg" alt="Cama elástica P, com rede de proteção colorida">
           </div>
           <div class="card__body">
             <h3>Cama elástica P</h3>
@@ -82,7 +103,7 @@
 
         <article class="card card--azul">
           <div class="card__img">
-            <img src="images/cama-elastica-m.jpg" alt="Cama elástica M, 2,90 metros, com rede de proteção">
+            <img loading="lazy" src="images/cama-elastica-m.jpg" alt="Cama elástica M, 2,90 metros, com rede de proteção">
           </div>
           <div class="card__body">
             <h3>Cama elástica M</h3>
@@ -95,7 +116,7 @@
 
         <article class="card card--vermelho">
           <div class="card__img">
-            <img src="images/cama-elastica-g.jpg" alt="Cama elástica G, 3,70 metros, redonda, com rede de proteção">
+            <img loading="lazy" src="images/cama-elastica-g.jpg" alt="Cama elástica G, 3,70 metros, redonda, com rede de proteção">
           </div>
           <div class="card__body">
             <h3>Cama elástica G</h3>
@@ -108,7 +129,7 @@
 
         <article class="card card--amarelo">
           <div class="card__img">
-            <img src="images/pula-pula-castelo.jpg" alt="Castelinho inflável colorido, com rampa">
+            <img loading="lazy" src="images/pula-pula-castelo.jpg" alt="Castelinho inflável colorido, com rampa">
           </div>
           <div class="card__body">
             <h3>Castelinho inflável</h3>
@@ -121,7 +142,7 @@
 
         <article class="card card--verde">
           <div class="card__img">
-            <img src="images/piscina-bolinhas.jpg" alt="Piscina de bolinhas colorida com cobertura listrada">
+            <img loading="lazy" src="images/piscina-bolinhas.jpg" alt="Piscina de bolinhas colorida com cobertura listrada">
           </div>
           <div class="card__body">
             <h3>Piscina de bolinhas</h3>
@@ -138,7 +159,12 @@
 
   <!-- ===== RESERVAR ===== -->
   <section class="reserva" id="reservar">
+    <div class="party-decor" aria-hidden="true">
+      <span class="balloon balloon--one"></span><span class="balloon balloon--two"></span>
+      <span class="party-star party-star--one">✦</span><span class="party-star party-star--two">✦</span>
+    </div>
     <div class="container">
+      <p class="section-eyebrow">Vamos tirar a festa do papel?</p>
       <h2 class="section-title">Monte sua reserva</h2>
       <p class="section-lead">
         Escolha um ou mais brinquedos e a região da festa: o valor da entrega é calculado na hora.
@@ -146,37 +172,17 @@
       </p>
 
       <form class="reserva__form" id="reservaForm">
-        <div class="reserva__grid">
-
-          <label class="campo">
+        <div class="reserva__layout">
+          <div class="reserva__dados">
+            <h3 class="reserva__titulo"><span class="reserva__etapa" aria-hidden="true">01</span> Conte sobre a festa</h3>
+            <p class="reserva__ajuda">Preencha seus dados e combine os horários de montagem e retirada.</p>
+            <div class="reserva__campos">
+<label class="campo">
             <span>Seu nome</span>
-            <input type="text" id="rNome" required placeholder="Como podemos te chamar?">
+            <input type="text" id="rNome" autocomplete="name" required placeholder="Como podemos te chamar?">
           </label>
 
-          <fieldset class="campo campo--brinquedos" aria-describedby="brinquedosAjuda">
-            <legend>Brinquedos</legend>
-            <p id="brinquedosAjuda">Marque um ou mais brinquedos para sua festa.</p>
-            <label class="brinquedo-opcao">
-              <input type="checkbox" name="brinquedos" value="cama-p" data-preco="130" checked>
-              <span>Cama elástica P — R$ 130,00</span>
-            </label>
-            <label class="brinquedo-opcao">
-              <input type="checkbox" name="brinquedos" value="cama-m" data-preco="150">
-              <span>Cama elástica M — R$ 150,00</span>
-            </label>
-            <label class="brinquedo-opcao">
-              <input type="checkbox" name="brinquedos" value="cama-g" data-preco="180">
-              <span>Cama elástica G — R$ 180,00</span>
-            </label>
-            <label class="brinquedo-opcao">
-              <input type="checkbox" name="brinquedos" value="castelinho" data-preco="250">
-              <span>Castelinho inflável — R$ 250,00</span>
-            </label>
-            <label class="brinquedo-opcao">
-              <input type="checkbox" name="brinquedos" value="piscina" data-preco="130">
-              <span>Piscina de bolinhas — R$ 130,00</span>
-            </label>
-          </fieldset>
+
 
           <label class="campo">
             <span>Região da festa</span>
@@ -217,10 +223,35 @@
             <span>Data e horário da desinstalação</span>
             <input type="datetime-local" id="rDesinstalacao" required>
           </label>
-
-        </div>
-
-        <div class="reserva__resumo">
+            </div>
+          </div>
+          <div class="reserva__escolha">
+          <fieldset class="campo campo--brinquedos" aria-describedby="brinquedosAjuda">
+            <legend><span class="reserva__etapa" aria-hidden="true">02</span> Escolha a diversão</legend>
+            <p id="brinquedosAjuda">Marque um ou mais brinquedos para sua festa.</p>
+            <label class="brinquedo-opcao">
+              <input type="checkbox" name="brinquedos" value="cama-p" data-preco="130" checked>
+              <span>Cama elástica P — R$ 130,00</span>
+            </label>
+            <label class="brinquedo-opcao">
+              <input type="checkbox" name="brinquedos" value="cama-m" data-preco="150">
+              <span>Cama elástica M — R$ 150,00</span>
+            </label>
+            <label class="brinquedo-opcao">
+              <input type="checkbox" name="brinquedos" value="cama-g" data-preco="180">
+              <span>Cama elástica G — R$ 180,00</span>
+            </label>
+            <label class="brinquedo-opcao">
+              <input type="checkbox" name="brinquedos" value="castelinho" data-preco="250">
+              <span>Castelinho inflável — R$ 250,00</span>
+            </label>
+            <label class="brinquedo-opcao">
+              <input type="checkbox" name="brinquedos" value="piscina" data-preco="130">
+              <span>Piscina de bolinhas — R$ 130,00</span>
+            </label>
+          </fieldset>
+<div class="reserva__resumo" aria-live="polite" aria-atomic="true">
+          <h3 class="reserva__resumo-titulo">Resumo da sua festa</h3>
           <div class="reserva__linha">
             <span>Subtotal dos brinquedos</span>
             <strong id="resumoBrinquedo">R$ 130,00</strong>
@@ -234,19 +265,28 @@
             <strong id="resumoTotal">—</strong>
           </div>
         </div>
-
-        <button type="submit" class="btn btn--whatsapp reserva__btn">Enviar pedido pelo WhatsApp</button>
+          </div>
+        </div>
+        <div class="reserva__finalizar">
+          <p class="reserva__confirmacao"><strong>Quase tudo pronto para a diversão.</strong><span>Envie seu pedido e confirme a disponibilidade com a gente.</span></p>
+<button type="submit" class="btn btn--whatsapp reserva__btn">Enviar pedido pelo WhatsApp</button>
         <p class="reserva__aviso">
           Valor estimado com base na nossa tabela de taxa de entrega a partir de Guaraituba, Colombo/PR.
           Pode variar conforme quantidade de brinquedos, horário do evento, montagem/desmontagem e local de difícil acesso — confirmamos tudo com você antes de fechar.
         </p>
+        </div>
       </form>
     </div>
   </section>
 
   <!-- ===== VÍDEOS ===== -->
   <section class="galeria" id="videos">
+    <div class="party-decor" aria-hidden="true">
+      <span class="balloon balloon--one"></span><span class="balloon balloon--two"></span>
+      <span class="party-star party-star--one">✦</span><span class="party-star party-star--two">✦</span>
+    </div>
     <div class="container">
+      <p class="section-eyebrow">Alegria em movimento</p>
       <h2 class="section-title">Festas e instalações em vídeo</h2>
       <p class="section-lead">Vídeos reais de montagens e festas realizadas pela Black White Festas.</p>
 
@@ -268,7 +308,12 @@
 
   <!-- ===== FEEDBACKS ===== -->
   <section class="feedbacks" id="feedbacks">
+    <div class="party-decor" aria-hidden="true">
+      <span class="balloon balloon--one"></span><span class="balloon balloon--two"></span>
+      <span class="party-star party-star--one">✦</span><span class="party-star party-star--two">✦</span>
+    </div>
     <div class="container">
+      <p class="section-eyebrow">Histórias de quem comemorou</p>
       <h2 class="section-title">O que nossos clientes dizem</h2>
         <p class="section-lead">Em breve, vamos reunir aqui os comentários de quem já comemorou com a gente.</p>
 
@@ -282,7 +327,12 @@
 
   <!-- ===== COMO FUNCIONA ===== -->
   <section class="como-funciona" id="como-funciona">
+    <div class="party-decor" aria-hidden="true">
+      <span class="balloon balloon--one"></span><span class="balloon balloon--two"></span>
+      <span class="party-star party-star--one">✦</span><span class="party-star party-star--two">✦</span>
+    </div>
     <div class="container">
+      <p class="section-eyebrow">Da escolha ao último pulo</p>
       <h2 class="section-title section-title--claro">Como funciona a locação</h2>
 
       <div class="passos">
@@ -305,11 +355,17 @@
     </div>
   </section>
 
+  </main>
+
   <!-- ===== CONTATO / RODAPÉ ===== -->
   <footer class="rodape" id="contato">
+    <div class="party-decor" aria-hidden="true">
+      <span class="balloon balloon--one"></span><span class="balloon balloon--two"></span>
+      <span class="party-star party-star--one">✦</span><span class="party-star party-star--two">✦</span>
+    </div>
     <div class="container rodape__inner">
       <div class="rodape__marca">
-        <img src="images/logo.jpg" alt="Black White Festas" class="rodape__logo">
+        <img loading="lazy" src="images/logo.jpg" alt="Black White Festas" class="rodape__logo">
         <p>Locação de cama elástica e brinquedos para festas.</p>
       </div>
 
